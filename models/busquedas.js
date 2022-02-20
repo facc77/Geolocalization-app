@@ -35,6 +35,35 @@ class Busquedas {
       return [];
     }
   }
+
+  async climaLugar(lat, lon) {
+    try {
+      //instance axios.create()
+      const instance = axios.create({
+        baseURL: "http://api.openweathermap.org/data/2.5/weather",
+        params: {
+          lat,
+          lon,
+          appid: process.env.OPENWEATHER_KEY,
+          units: "metric",
+          lang: "es",
+        },
+      });
+      const resp = await instance.get();
+      const { temp, temp_min, temp_max } = resp.data.main;
+      const desc = resp.data.weather[0].description;
+
+      return {
+        desc,
+        temp,
+        temp_min,
+        temp_max,
+      };
+    } catch (error) {
+      console.log("-------------error------------");
+      console.log(error);
+    }
+  }
 }
 
 module.exports = Busquedas;

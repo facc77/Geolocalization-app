@@ -3,6 +3,7 @@ const {
   inquirerMenu,
   pausa,
   listarLugares,
+  climaLugar,
 } = require("./helpers/inquirer");
 const Busquedas = require("./models/busquedas");
 require("colors");
@@ -21,8 +22,12 @@ const main = async () => {
         const termino = await leerInput("Ciudad:");
         const lugares = await busquedas.ciudad(termino);
         const id = await listarLugares(lugares);
-        const lugarSel = lugares.find((l) => l.id === id);
-        console.log(lugarSel);
+        const { nombre, lat, lng } = lugares.find((l) => l.id === id);
+        const { desc, temp, temp_min, temp_max } = await busquedas.climaLugar(
+          lat,
+          lng
+        );
+
         //Buscar los lugares
 
         //Seleccionar el lugar
@@ -32,12 +37,13 @@ const main = async () => {
         //Mostrar resultado
 
         console.log("\nInformacion del lugar|n");
-        console.log("Ciudad:", lugarSel.nombre);
-        console.log("Lat:", lugarSel.lat);
-        console.log("Lng:", lugarSel.lng);
-        console.log("Temperatura:");
-        console.log("Minima:");
-        console.log("Maxima:");
+        console.log("Ciudad:", nombre);
+        console.log("Lat:", lat);
+        console.log("Lng:", lng);
+        console.log("Clima:", desc);
+        console.log("Temperatura:", temp);
+        console.log("Minima:", temp_min);
+        console.log("Maxima:", temp_max);
         break;
       case 2:
         console.log("cuiaad2");
