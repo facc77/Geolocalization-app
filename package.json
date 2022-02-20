@@ -1,0 +1,25 @@
+{
+  "name": "05-geolocalizacion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/facc77/Geolocalization-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/facc77/Geolocalization-app/issues"
+  },
+  "homepage": "https://github.com/facc77/Geolocalization-app#readme",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "colors": "^1.4.0",
+    "inquirer": "^8.2.0"
+  }
+}
