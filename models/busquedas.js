@@ -1,10 +1,11 @@
 const axios = require("axios");
+const fs = require("fs");
 
 class Busquedas {
-  historial = ["Tegucigalpa", "Madrid", "San Jose"];
-
+  historial = [];
+  dbPath = "./db/database.json";
   constructor() {
-    //leer db si existe
+    this.leerDB();
   }
 
   get paramsMapbox() {
@@ -13,6 +14,22 @@ class Busquedas {
       limit: 5,
       language: "es",
     };
+  }
+
+  get weatherParams() {
+    return {
+      appid: process.env.OPENWEATHER_KEY,
+      units: "metric",
+      lang: "es",
+    };
+  }
+
+  get historialCapitalizado() {
+    return this.historial.map((lugar) => {
+      let palabras = lugar.split(" ");
+      palabras = palabras.map((p) => p[0].toUpperCase() + p.substring(1));
+      return palabras.join(" ");
+    });
   }
 
   async ciudad(lugar = "") {
@@ -41,13 +58,7 @@ class Busquedas {
       //instance axios.create()
       const instance = axios.create({
         baseURL: "http://api.openweathermap.org/data/2.5/weather",
-        params: {
-          lat,
-          lon,
-          appid: process.env.OPENWEATHER_KEY,
-          units: "metric",
-          lang: "es",
-        },
+        params: { ...this.weatherParams, lat, lon },
       });
       const resp = await instance.get();
       const { temp, temp_min, temp_max } = resp.data.main;
@@ -63,6 +74,33 @@ class Busquedas {
       console.log("-------------error------------");
       console.log(error);
     }
+  }
+  agregarHistorial(lugar = "") {
+    //prevenir duplicados
+
+    if (this.historial.includes(lugar)) {
+      return;
+    }
+    this.historial = this.historial.splice(0, 5);
+
+    this.historial.unshift(lugar);
+
+    //grabar en db
+    this.guardarDB();
+  }
+  guardarDB() {
+    const payload = {
+      historial: this.historial,
+    };
+
+    fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+  }
+
+  leerDB() {
+    if (!fs.existsSync(this.dbPath)) return;
+    const data = fs.readFileSync(this.dbPath, "utf8");
+    const info = JSON.parse(data);
+    this.historial = info.historial;
   }
 }
 

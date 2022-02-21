@@ -20,33 +20,38 @@ const main = async () => {
       case 1:
         //mostrar mensaje
         const termino = await leerInput("Ciudad:");
+        //Buscar los lugares
         const lugares = await busquedas.ciudad(termino);
+        //Seleccionar el lugar
         const id = await listarLugares(lugares);
+        if (id === "0") continue; // sigue con la iteracion
+
         const { nombre, lat, lng } = lugares.find((l) => l.id === id);
+        //Guardar en DB
+        busquedas.agregarHistorial(nombre);
+        //Clima
         const { desc, temp, temp_min, temp_max } = await busquedas.climaLugar(
           lat,
           lng
         );
 
-        //Buscar los lugares
-
-        //Seleccionar el lugar
-
-        //Clima
-
         //Mostrar resultado
 
-        console.log("\nInformacion del lugar|n");
-        console.log("Ciudad:", nombre);
+        console.log("\nInformacion del lugar\n".green);
+        console.log("Ciudad:", nombre.green);
         console.log("Lat:", lat);
         console.log("Lng:", lng);
-        console.log("Clima:", desc);
+        console.log("Clima:", desc.green);
         console.log("Temperatura:", temp);
         console.log("Minima:", temp_min);
         console.log("Maxima:", temp_max);
         break;
       case 2:
-        console.log("cuiaad2");
+        busquedas.leerDB();
+        busquedas.historial.forEach((lugar, i) => {
+          const idx = `${i + 1}`.green;
+          console.log(`${idx} ${lugar}`);
+        });
         break;
     }
     if (opt !== 0) await pausa();
